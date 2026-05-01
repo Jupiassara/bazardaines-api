@@ -5,8 +5,8 @@ const axios = require("axios");
 const app = express();
 app.use(cors());
 
-const ACCESS_TOKEN = "ea86e6945b235025d9244e038c855faac2200f6a";
-const SECRET_ACCESS_TOKEN = "384b93ff157c4a362ccae0a4bb4f84f7e9b947ac";
+const ACCESS_TOKEN = "90d6f6f6a741248a6d7cef52015e0fcada662f73";
+const SECRET_ACCESS_TOKEN = "06b1c43ca9339432e74a23e7cecf6ead69f78cef";
 const LOJA_ID = "259292";
 
 app.get("/produtos", async (req, res) => {
