@@ -18,7 +18,7 @@ export default function App() {
 
   async function buscarProdutos() {
     try {
-      const res = await fetch("http://localhost:3000/produtos");
+      const res = await fetch("https://bazardaines-api.onrender.com/produtos")
       const data = await res.json();
       setProdutos(data);
     } catch (err) {

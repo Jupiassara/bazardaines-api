@@ -48,7 +48,7 @@ app.get("/produtos", async (req, res) => {
         : "https://via.placeholder.com/300x300?text=Sem+Imagem",
   });
 });
-     if (pagina >= 2) break;
+     if (pagina >= 5) break;
       if (!data.meta?.proxima_pagina) break;
 
       pagina++;
