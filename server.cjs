@@ -4,6 +4,7 @@ const axios = require("axios");
 
 const app = express();
 app.use(cors());
+app.use(express.static("public"));
 
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "90d6f6f6a741248a6d7cef52015e0fcada662f73";
 const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN || "06b1c43ca9339432e74a23e7cecf6ead69f78cef";
@@ -12,7 +13,7 @@ const LOJA_ID = "259292";
 // Quantas páginas buscar na API.
 // 2 = mais rápido / menos produtos
 // 5 = mais produtos / um pouco mais demorado
-const LIMITE_PAGINAS = 5;
+const LIMITE_PAGINAS = 250;
 
 app.get("/", (req, res) => {
   res.send("API Bazar da Inês online");
@@ -65,7 +66,10 @@ app.get("/produtos", async (req, res) => {
       pagina++;
     }
 
-    res.json(produtos);
+    console.log("TOTAL DE PRODUTOS:", produtos.length);
+
+res.json(produtos);
+
   } catch (err) {
     console.error("STATUS:", err.response?.status);
     console.error("RESPOSTA:", err.response?.data);

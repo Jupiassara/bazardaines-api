@@ -5,14 +5,14 @@ const axios = require("axios");
 const app = express();
 app.use(cors());
 
-const ACCESS_TOKEN = process.env.ACCESS_TOKEN || "90d6f6f6a741248a6d7cef52015e0fcada662f73";
-const SECRET_ACCESS_TOKEN = process.env.SECRET_ACCESS_TOKEN || "06b1c43ca9339432e74a23e7cecf6ead69f78cef";
-const LOJA_ID = "259292";
+const ACCESS_TOKEN =
+  process.env.ACCESS_TOKEN || "SEU_ACCESS_TOKEN_AQUI";
 
-// Quantas páginas buscar na API.
-// 2 = mais rápido / menos produtos
-// 5 = mais produtos / um pouco mais demorado
-const LIMITE_PAGINAS = 5;
+const SECRET_ACCESS_TOKEN =
+  process.env.SECRET_ACCESS_TOKEN || "SEU_SECRET_ACCESS_TOKEN_AQUI";
+
+const LOJA_ID = "259292";
+const LIMITE_PAGINAS =250;
 
 app.get("/", (req, res) => {
   res.send("API Bazar da Inês online");
@@ -39,10 +39,11 @@ app.get("/produtos", async (req, res) => {
       );
 
       const data = response.data;
+      const lista = data.data || data.produtos || [];
 
-      if (!data.data || data.data.length === 0) break;
+      if (!Array.isArray(lista) || lista.length === 0) break;
 
-      data.data.forEach((p) => {
+      lista.forEach((p) => {
         const estoque = Number(String(p.estoque || "0").replace(",", "."));
 
         if (estoque <= 0) return;
@@ -56,15 +57,15 @@ app.get("/produtos", async (req, res) => {
           imagem:
             Array.isArray(p.fotos) && p.fotos.length > 0
               ? p.fotos[0]
-              : "https://via.placeholder.com/300x300?text=Sem+Imagem",
+              : "",
         });
       });
 
-      if (!data.meta?.proxima_pagina) break;
+      if (!data.meta?.proxima_pagina && lista.length === 0) break;
 
       pagina++;
     }
-
+    console.log("TOTAL DE PRODUTOS:", produtos.length);
     res.json(produtos);
   } catch (err) {
     console.error("STATUS:", err.response?.status);
