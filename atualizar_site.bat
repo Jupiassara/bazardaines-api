@@ -1,11 +1,16 @@
 @echo off
-echo [1/2] Buscando estoque no Gestaoclick...
+echo [1/3] Limpando arquivos antigos...
+if exist produtos.json del produtos.json /q
+
+echo [2/3] Buscando estoque no Gestaoclick...
 node sincronizar.cjs
 
-echo [2/2] Enviando para a internet...
+echo [3/3] Enviando atualizacoes para o site...
 git add .
 git commit -m "Sincronizacao automatica Bazar"
 git push origin main
 
-echo --- SUCESSO: Seu site foi atualizado! ---
+echo ------------------------------------------
+echo ✅ SUCESSO: Seu site foi atualizado!
+echo ------------------------------------------
 pause
