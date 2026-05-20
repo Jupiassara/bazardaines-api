@@ -34,7 +34,6 @@ const App = () => {
     if (catOriginal.endsWith('- Car')) return 'Carnaval';
     if (catOriginal.endsWith('- Jun')) return 'Festa Junina';
     if (catOriginal.endsWith('- Cop')) return 'Copa';
-    if (catOriginal.endsWith('- Serv')) return 'Serviços';
     
     if (catOriginal.endsWith('- Bri')) return 'Brinquedos';
     if (catOriginal.endsWith('- Art')) return 'Artesanato';
@@ -54,15 +53,6 @@ const App = () => {
 
     const ordemCategorias = [
   'Todos',
-
-  'Copa',
-  'Natal',
-  'Carnaval',
-  'Halloween',
-  'Páscoa',
-  'Festa Junina',
-  'Serviços',
-
   'Papelaria',
   'Informatica',
   'Utilidades Domésticas',
@@ -76,6 +66,12 @@ const App = () => {
   'Bebê',
   'Casa',
   'Diversos',
+  'Natal',
+  'Carnaval',
+  'Páscoa',
+  'Festa Junina',
+  'Halloween',
+  'Copa',
   'Sem categoria'
 ];
 

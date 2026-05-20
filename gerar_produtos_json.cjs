@@ -34,8 +34,9 @@ console.log("SALVOU produtos.json COM SUCESSO!");
 console.log("PRIMEIRO PRODUTO:", produtos[0]);
 
     console.log("Arquivo produtos.json gerado com sucesso!");
-  } catch (error) {
+    } catch (error) {
     console.error("Erro ao gerar JSON:", error.message);
+    process.exit(1);
   }
 }
 

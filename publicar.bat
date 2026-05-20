@@ -4,69 +4,67 @@ echo ATUALIZANDO BAZAR DA INES
 echo ===============================
 
 cd /d C:\Users\jupia\bazardaines-api
+echo.
+echo Iniciando servidor da API...
+start "API BAZAR" cmd /k node server.cjs
+
+echo Aguardando servidor iniciar...
+timeout /t 5 >nul
+echo.
+echo 1 - Limpando arquivos temporarios...
+if exist dist rmdir /s /q dist
+if exist node_modules\.cache rmdir /s /q node_modules\.cache
 
 echo.
-echo Testando servidor local...
-
-curl -s http://localhost:3000/produtos >nul
-
-if %errorlevel%==0 (
-    echo Servidor respondendo.
-) else (
-    echo Ligando servidor...
-    start cmd /k node server.cjs
-    timeout /t 10 >nul
-)
-
-echo.
-echo 1 - Gerando produtos.json...
+echo 2 - Gerando produtos.json...
 node gerar_produtos_json.cjs
 
-if errorlevel 1 (
-    echo ERRO ao gerar produtos.json - usando versao antiga
-    if not exist public\produtos.json (
-        echo Nao tem produtos.json antigo. Abortando.
-        pause
-        exit /b
-    )
-    echo Continuando com produtos.json antigo...
+if not exist produtos.json (
+    echo.
+    echo ERRO: produtos.json nao foi criado.
+    echo PUBLICACAO CANCELADA.
+    pause
+    exit /b
 )
 
-echo.
-echo 2 - Copiando para public...
-copy /Y produtos.json public\produtos.json
-
-echo.
-echo Limpando dist antigo...
-if exist dist rmdir /s /q dist
-
-echo.
-echo 3 - Build do app...
-npm run build
+findstr /C:"codigo" produtos.json >nul
 
 if errorlevel 1 (
-    echo ERRO no build.
+    echo.
+    echo ERRO: produtos.json parece estar vazio ou invalido.
+    echo PUBLICACAO CANCELADA.
+    pause
+    exit /b
+)
+echo.
+echo 2.1 - Copiando produtos.json para public...
+copy /Y produtos.json public\produtos.json
+
+if errorlevel 1 (
+    echo.
+    echo ERRO ao copiar produtos.json para public.
     pause
     exit /b
 )
 
 echo.
-echo 3.5 - Forcando versionamento anti-cache iPhone...
-powershell -Command "(gc dist\index.html) -replace 'main.tsx\?v=\d+', 'main.tsx?v=%random%' | Out-File -encoding utf8 dist\index.html"
-powershell -Command "(gc dist\index.html) -replace 'versao-bazar\" content=\"[^\"]+\"', 'versao-bazar\" content=\"iphone-v%random%\"' | Out-File -encoding utf8 dist\index.html"
+echo 3 - Build do app...
+call npm run build
 
 if errorlevel 1 (
-    echo ERRO ao aplicar cache bust.
+    echo.
+    echo ERRO critico no build. O deploy foi cancelado.
     pause
     exit /b
 )
 
 echo.
 echo 4 - Publicando no Cloudflare...
-npx wrangler pages deploy dist --project-name bazar-da-ines-app --commit-dirty=true
+call npx wrangler pages deploy dist --project-name=bazar-da-ines-app --commit-dirty=true
 
 if errorlevel 1 (
-    echo ERRO na publicacao.
+    echo.
+    echo ERRO ao publicar no Cloudflare.
     pause
     exit /b
 )
@@ -75,5 +73,4 @@ echo.
 echo ===============================
 echo PUBLICADO COM SUCESSO!
 echo ===============================
-
 pause

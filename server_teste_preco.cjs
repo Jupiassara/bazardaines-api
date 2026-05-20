@@ -110,12 +110,12 @@ app.get("/produtos", async (req, res) => {
     const produtos = [];
 
     while (pagina <= LIMITE_PAGINAS) {
-      console.log("Buscando página:", pagina);
+  console.log("Buscando página:", pagina);
 
-      const response = await axios.get(
+  const response = await axios.get(
     `https://api.gestaoclick.com/produtos?loja_id=${LOJA_ID}&ativo=1&pagina=${pagina}`,
-        {
-          headers: {
+    {
+      headers: {
         "Content-Type": "application/json",
         "access-token": ACCESS_TOKEN,
         "secret-access-token": SECRET_ACCESS_TOKEN,
@@ -123,6 +123,15 @@ app.get("/produtos", async (req, res) => {
       timeout: 30000,
     }
   );
+
+  console.log(
+    JSON.stringify(
+      response.data.produtos?.[0] || response.data[0],
+      null,
+      2
+    )
+  );
+
       const data = response.data;
 
       if (!data.data || data.data.length === 0) break;
@@ -138,17 +147,11 @@ app.get("/produtos", async (req, res) => {
           totalOcultados++;
           return;
         }
-const precoAtacado = p.valores?.find(
-  (v) => v.nome_tipo === "Atacado-7%"
-);
 
-const precoFinal = precoAtacado
-  ? Number(String(precoAtacado.valor_venda || 0).replace(",", "."))
-  : Number(String(p.valor_venda || 0).replace(",", "."));
         produtos.push({
           codigo: String(p.codigo_interno || "").padStart(6, "0"),
           nome: p.nome || "",
-          preco: precoFinal,
+          preco: Number(String(p.valor_venda || 0).replace(",", ".")),
           categoria,
           estoque,
           imagem:
@@ -175,6 +178,31 @@ const precoFinal = precoAtacado
   }
 });
 
+app.get("/teste-produto/:codigo", async (req, res) => {
+  try {
+    const codigo = req.params.codigo;
+
+    const response = await axios.get(
+      `https://api.gestaoclick.com/produtos?codigo=${codigo}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          "access-token": ACCESS_TOKEN,
+          "secret-access-token": SECRET_ACCESS_TOKEN,
+        },
+        timeout: 30000,
+      }
+    );
+
+console.log("=== TESTE API ORIGINAL ===");
+console.log(Object.keys(response.data));
+console.log(JSON.stringify(response.data, null, 2).slice(0, 5000));
+console.log("=== FIM TESTE API ORIGINAL ===");
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json(err.response?.data || err.message);
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 
